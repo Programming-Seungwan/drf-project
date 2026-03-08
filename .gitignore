@@ -1,0 +1,42 @@
+# Django database
+*.sqlite3
+db.sqlite3
+
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+menv/
+venv/
+.venv/
+env/
+
+# Environment variables / local settings
+.env
+.env.*
+*.local
+
+# Logs and runtime files
+*.log
+*.pid
+
+# Test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE / editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
