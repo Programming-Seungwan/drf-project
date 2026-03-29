@@ -1,19 +1,32 @@
-from watchlist_app.models import Movie
+from watchlist_app.models import WatchList, StreamingPlatform
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
-from watchlist_app.api.serializers import MovieSerializer
+from watchlist_app.api.serializers import WatchListSerializer, StreamingPlatformSerializer
 from rest_framework.views import APIView
 
-class MovieListView(APIView):
-
+class StreamingListView(APIView):
     def get(self, request):
-        movies = Movie.objects.all()
-        serializer = MovieSerializer(movies, many=True)
+        streamingPlatformList = StreamingPlatform.objects.all()
+        serializer = StreamingPlatformSerializer(streamingPlatformList, many = True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = MovieSerializer(data=request.data)
+        serializer = StreamingPlatformSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+class WatchListView(APIView):
+
+    def get(self, request):
+        watchList = WatchList.objects.all()
+        serializer = WatchListSerializer(watchList, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = WatchListSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save() # 내부적으로 Serializer 인스턴스의 create() 메서드를 호출한다.
             return Response(serializer.data)
@@ -21,19 +34,19 @@ class MovieListView(APIView):
             return Response(serializer.errors)
 
 
-class MovieDetailView(APIView):
+class WatchDetailView(APIView):
     def get(self, request, pk):
         try:
-            movies = Movie.objects.get(pk= pk)
-        except Movie.DoesNotExist:
+            watch = WatchList.objects.get(pk= pk)
+        except WatchList.DoesNotExist:
             return Response({'Error' : 'Movie Not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = MovieSerializer(movies)
+        serializer = WatchListSerializer(watch)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        movie = Movie.objects.get(pk=pk)
-        serializer = MovieSerializer(movie, request.data)
+        watch = WatchList.objects.get(pk=pk)
+        serializer = WatchListSerializer(watch, request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -41,8 +54,8 @@ class MovieDetailView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        movie = Movie.objects.get(pk=pk)
-        movie.delete()
+        watch = WatchList.objects.get(pk=pk)
+        watch.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
