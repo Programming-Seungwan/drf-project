@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 class StreamingListView(APIView):
     def get(self, request):
         streamingPlatformList = StreamingPlatform.objects.all()
-        serializer = StreamingPlatformSerializer(streamingPlatformList, many = True)
+        serializer = StreamingPlatformSerializer(streamingPlatformList, many = True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):
