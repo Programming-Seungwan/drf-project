@@ -1,7 +1,7 @@
-from watchlist_app.models import WatchList, StreamingPlatform
+from watchlist_app.models import WatchList, StreamingPlatform, Review
 from rest_framework.response import Response
-from rest_framework import status
-from watchlist_app.api.serializers import WatchListSerializer, StreamingPlatformSerializer
+from rest_framework import status, generics
+from watchlist_app.api.serializers import WatchListSerializer, StreamingPlatformSerializer, ReviewSerializer
 from rest_framework.views import APIView
 
 class StreamingListView(APIView):
@@ -94,7 +94,18 @@ class WatchDetailView(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# Create your views here.
+class ReviewListView(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(watchList=pk)
+
+
+class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
 
 # @api_view(['GET', 'POST'])
 # def movie_list(request):
