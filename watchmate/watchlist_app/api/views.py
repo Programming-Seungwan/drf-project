@@ -1,6 +1,8 @@
 from watchlist_app.models import WatchList, StreamingPlatform, Review
 from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticated
 from watchlist_app.api.serializers import WatchListSerializer, StreamingPlatformSerializer, ReviewSerializer
+from watchlist_app.api.permissions import IsReviewUserOrReadOnly
 
 class StreamingPlatformViewSet(viewsets.ModelViewSet):
     queryset = StreamingPlatform.objects.all()
@@ -14,6 +16,7 @@ class WatchListViewSet(viewsets.ReadOnlyModelViewSet):
 class ReviewListView(generics.ListCreateAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -28,6 +31,7 @@ class ReviewListView(generics.ListCreateAPIView):
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsReviewUserOrReadOnly]
 
 # @api_view(['GET', 'POST'])
 # def movie_list(request):
