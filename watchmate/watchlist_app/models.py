@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class StreamingPlatform(models.Model):
@@ -26,6 +27,7 @@ class Review(models.Model):
     created = models.DateTimeField(auto_now_add=True) # 객체가 생성될때
     update = models.DateTimeField(auto_now=True) # 객체가 저장될 때마다 매번
     active = models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     watchList = models.ForeignKey(WatchList, on_delete=models.CASCADE, related_name='reviews')
 
     def __str__(self):
