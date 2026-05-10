@@ -1,55 +1,15 @@
 from watchlist_app.models import WatchList, StreamingPlatform, Review
-from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import generics, viewsets
 from watchlist_app.api.serializers import WatchListSerializer, StreamingPlatformSerializer, ReviewSerializer
-from rest_framework.views import APIView
-from rest_framework import viewsets
 
 class StreamingPlatformViewSet(viewsets.ModelViewSet):
     queryset = StreamingPlatform.objects.all()
     serializer_class = StreamingPlatformSerializer
 
 
-class WatchListView(APIView):
-
-    def get(self, request):
-        watchList = WatchList.objects.all()
-        serializer = WatchListSerializer(watchList, many=True, context={'request': request})
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = WatchListSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save() # 내부적으로 Serializer 인스턴스의 create() 메서드를 호출한다.
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-
-class WatchDetailView(APIView):
-    def get(self, request, pk):
-        try:
-            watch = WatchList.objects.get(pk= pk)
-        except WatchList.DoesNotExist:
-            return Response({'Error' : 'Movie Not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = WatchListSerializer(watch, context={'request': request})
-        return Response(serializer.data)
-
-    def put(self, request, pk):
-        watch = WatchList.objects.get(pk=pk)
-        serializer = WatchListSerializer(watch, request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        watch = WatchList.objects.get(pk=pk)
-        watch.delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class WatchListViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
 
 class ReviewListView(generics.ListCreateAPIView):
     queryset = Review.objects.all()
